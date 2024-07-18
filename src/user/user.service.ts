@@ -1,5 +1,5 @@
 import { HttpException, Injectable } from '@nestjs/common';
-import { PrismaService } from 'src/common/prisma.service';
+import { PrismaService } from '../common/prisma.service';
 import {
   LoginUserRequest,
   RegisterUserRequest,
@@ -69,19 +69,21 @@ export class UserService {
       throw new HttpException('name or password invalid', 422);
     }
 
-    const token = await this.prismaService.user.update({
+    const token = await bcrypt.hash(user.name, 10);
+
+    await this.prismaService.user.update({
       where: {
-        id: user.id
+        id: user.id,
       },
       data: {
-        token: await bcrypt.hash(user.name, 10)
-      }
-    })
+        token: token,
+      },
+    });
 
     return {
       name: user.name,
       email: user.email,
-      token: token.token
-    }
+      token: token,
+    };
   }
 }
