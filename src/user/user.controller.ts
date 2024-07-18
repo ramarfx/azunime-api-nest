@@ -6,7 +6,7 @@ import { UserService } from './user.service';
 export class UserController {
   constructor(private userService: UserService) {}
 
-  @Get()
+  @Get('/check')
   getUser() {
     return 'hello from user controller';
   }
