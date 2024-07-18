@@ -16,7 +16,7 @@ datasource db {
 
 model User {
   id       Int     @id @default(autoincrement())
-  name     String  @db.VarChar(100)
+  name     String  @db.VarChar(100) @unique
   email    String  @db.VarChar(150)
   password String  @db.VarChar(250)
   token    String? @db.VarChar(250)

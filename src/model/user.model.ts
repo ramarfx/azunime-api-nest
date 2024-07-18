@@ -4,6 +4,11 @@ export class RegisterUserRequest {
     password: string;
 }
 
+export interface LoginUserRequest {
+    name: string
+    password: string
+}
+
 export class UserResponse {
     name: string;
     email: string;
