@@ -16,10 +16,36 @@ datasource db {
 
 model User {
   id       Int     @id @default(autoincrement())
-  name     String  @db.VarChar(100) @unique
+  name     String  @unique @db.VarChar(100)
   email    String  @db.VarChar(150)
   password String  @db.VarChar(250)
   token    String? @db.VarChar(250)
 
   @@map("users")
+}
+
+model Anime {
+  id         Int                  @id @default(autoincrement())
+  title      String               @db.VarChar(255)
+  episode    Int
+  categories CategoriesOnAnimes[]
+
+  @@map("animes")
+}
+
+model Category {
+  id     Int                  @id @default(autoincrement())
+  name   String               @db.VarChar(200)
+  animes CategoriesOnAnimes[]
+  
+  @@map("categories")
+}
+
+model CategoriesOnAnimes {
+  animeId    Int
+  categoryId Int
+  anime      Anime    @relation(fields: [animeId], references: [id])
+  category   Category @relation(fields: [categoryId], references: [id])
+
+  @@id([animeId, categoryId])
 }
