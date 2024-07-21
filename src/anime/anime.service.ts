@@ -32,7 +32,7 @@ export class AnimeService {
     return simplifiedAnimes;
   }
 
-  async addAnime(request: StoreAnimeRequest): Promise<any> {
+  async addAnime(request: StoreAnimeRequest): Promise<Anime> {
     const anime = await this.prismaService.anime.create({
       data: {
         title: request.title,
@@ -51,6 +51,30 @@ export class AnimeService {
         },
       },
     });
+
+    const simplifiedAnimes = {
+      id: anime.id,
+      title: anime.title,
+      episode: anime.episode,
+      categories: anime.categories.map((cat) => cat.category.name),
+    }
+
+    return simplifiedAnimes;
+  }
+
+  async getAnimeById(id: number): Promise<Anime> {
+    const anime = await this.prismaService.anime.findFirstOrThrow({
+      where: {
+        id: id
+      },
+      include: {
+        categories: {
+          include: {
+            category: true
+          },
+        }
+      }
+    })
 
     const simplifiedAnimes = {
       id: anime.id,

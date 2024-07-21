@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { AnimeService } from './anime.service';
 import { StoreAnimeRequest } from 'src/model/anime.model';
 
@@ -31,6 +31,20 @@ export class AnimeController {
       };
     } catch (error) {
       return error;
+    }
+  }
+
+  @Get(':id')
+  async getAnimeById(@Param('id') id: number) {
+    try {
+      const result = await this.animeService.getAnimeById(Number(id))
+      
+      return {
+        message: 'get anime from id success',
+        data: result
+      }
+    } catch (error) {
+      return error.message;
     }
   }
 }
