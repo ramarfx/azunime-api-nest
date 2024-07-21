@@ -6,6 +6,20 @@ import { PrismaService } from 'src/common/prisma.service';
 export class CategoryService {
   constructor(private prismaService: PrismaService) {}
 
+  async getAllCategory(): Promise<Category[]> {
+    const categories = await this.prismaService.category.findMany({
+      include: {
+        animes: {
+          include: {
+            anime: true,
+          }
+        }
+      }
+    })
+
+    return categories;
+  }
+
   async storeCategory(category: string): Promise<Category> {
     const categoryReq = await this.prismaService.category.create({
       data: { name: category },

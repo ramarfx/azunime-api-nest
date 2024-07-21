@@ -8,32 +8,57 @@ export class AnimeService {
   constructor(private prismaService: PrismaService) {}
 
   async getAllAnime(): Promise<Anime[]> {
-    const anime = await this.prismaService.anime.findMany();
+    const anime = await this.prismaService.anime.findMany({
+      include: {
+        categories: {
+          include: {
+            category: true,
+          },
+        },
+      },
+    });
 
     if (anime.length === 0) {
       throw new HttpException('anime is empty', 404);
     }
 
-    return anime;
+    const simplifiedAnimes = anime.map((anime) => ({
+      id: anime.id,
+      title: anime.title,
+      episode: anime.episode,
+      categories: anime.categories.map((cat) => cat.category.name),
+    }));
+
+    return simplifiedAnimes;
   }
 
-  async addAnime(request: StoreAnimeRequest): Promise<Anime> {
+  async addAnime(request: StoreAnimeRequest): Promise<any> {
     const anime = await this.prismaService.anime.create({
       data: {
         title: request.title,
         episode: request.episode,
+        categories: {
+          create: request.categories.map((id) => ({
+            categoryId: id,
+          })),
+        },
+      },
+      include: {
+        categories: {
+          include: {
+            category: true,
+          },
+        },
       },
     });
 
-    request.categories.forEach(async (category) => {
-      await this.prismaService.categoriesOnAnimes.create({
-        data: {
-          animeId: anime.id,
-          categoryId: category,
-        },
-      });
-    });
+    const simplifiedAnimes = {
+      id: anime.id,
+      title: anime.title,
+      episode: anime.episode,
+      categories: anime.categories.map((cat) => cat.category.name),
+    }
 
-    return anime;
+    return simplifiedAnimes;
   }
 }
