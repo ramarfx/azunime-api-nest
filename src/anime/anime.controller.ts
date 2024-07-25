@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Param, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { AnimeService } from './anime.service';
 import { StoreAnimeRequest } from 'src/model/anime.model';
+import { WebResponse } from 'src/model/web.model';
 
 @Controller('anime')
 export class AnimeController {
@@ -45,6 +46,23 @@ export class AnimeController {
       }
     } catch (error) {
       return error.message;
+    }
+  }
+
+  @Delete(':id')
+  async deleteAnime(@Param('id') id: number): Promise<WebResponse<null>> {
+    try {
+      await this.animeService.deleteAnime(Number(id))
+
+      return {
+        message: 'delete anime success',
+        data: null
+      }
+    } catch (error) {
+      return {
+        message: 'delete anime failed',
+        errors: error.message
+      }
     }
   }
 }

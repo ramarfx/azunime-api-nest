@@ -44,8 +44,8 @@ model Category {
 model CategoriesOnAnimes {
   animeId    Int
   categoryId Int
-  anime      Anime    @relation(fields: [animeId], references: [id])
-  category   Category @relation(fields: [categoryId], references: [id])
+  anime      Anime    @relation(fields: [animeId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade, onUpdate: Cascade)
 
   @@id([animeId, categoryId])
 }

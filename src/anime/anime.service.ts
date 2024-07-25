@@ -57,7 +57,7 @@ export class AnimeService {
       title: anime.title,
       episode: anime.episode,
       categories: anime.categories.map((cat) => cat.category.name),
-    }
+    };
 
     return simplifiedAnimes;
   }
@@ -65,24 +65,38 @@ export class AnimeService {
   async getAnimeById(id: number): Promise<Anime> {
     const anime = await this.prismaService.anime.findFirstOrThrow({
       where: {
-        id: id
+        id: id,
       },
       include: {
         categories: {
           include: {
-            category: true
+            category: true,
           },
-        }
-      }
-    })
+        },
+      },
+    });
 
     const simplifiedAnimes = {
       id: anime.id,
       title: anime.title,
       episode: anime.episode,
       categories: anime.categories.map((cat) => cat.category.name),
-    }
+    };
 
     return simplifiedAnimes;
+  }
+
+  async deleteAnime(id: number): Promise<null> {
+    const anime = await this.prismaService.anime.delete({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!anime) {
+      throw new HttpException('anime not found', 404);
+    }
+
+    return null;
   }
 }
