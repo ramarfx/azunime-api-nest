@@ -2,6 +2,7 @@ import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { AnimeService } from './anime.service';
 import { StoreAnimeRequest } from 'src/model/anime.model';
 import { WebResponse } from 'src/model/web.model';
+import { Anime } from '@prisma/client';
 
 @Controller('anime')
 export class AnimeController {
@@ -22,7 +23,7 @@ export class AnimeController {
   }
 
   @Post()
-  async addAnime(@Body() req: StoreAnimeRequest) {
+  async addAnime(@Body() req: StoreAnimeRequest) : Promise<WebResponse<Anime>> {
     try {
       const result = await this.animeService.addAnime(req);
 
@@ -31,12 +32,15 @@ export class AnimeController {
         data: result,
       };
     } catch (error) {
-      return error;
+      return {
+        message: 'add anime failed',
+        errors: error.message
+      };
     }
   }
 
   @Get(':id')
-  async getAnimeById(@Param('id') id: number) {
+  async getAnimeById(@Param('id') id: number): Promise<WebResponse<Anime>> {
     try {
       const result = await this.animeService.getAnimeById(Number(id))
       
@@ -45,7 +49,10 @@ export class AnimeController {
         data: result
       }
     } catch (error) {
-      return error.message;
+      return {
+        message: 'get anime from id failed',
+        errors: error.message
+      };
     }
   }
 
